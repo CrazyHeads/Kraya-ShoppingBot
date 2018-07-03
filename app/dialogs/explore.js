@@ -118,7 +118,7 @@ module.exports = function(bot) {
             session.privateConversationData,
             {
               list: {
-                type: 'categories',
+                type: 'category',
                 data: subcategories
               },
               pagination: {

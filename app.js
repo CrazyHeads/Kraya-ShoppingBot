@@ -29,7 +29,7 @@ var intents = new builder.IntentDialog({
   recognizers: [
     commands,
     greeting,
-    new builder.LuisRecognizer(model)//process.env.LUIS_ENDPOINT)
+    new builder.LuisRecognizer(process.env.LUIS_ENDPOINT)
   ],
   intentThreshold: 0.2,
   recognizeOrder: builder.RecognizeOrder.series

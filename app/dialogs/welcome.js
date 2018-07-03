@@ -22,7 +22,7 @@ module.exports = function(bot) {
 
       if (!lastVisit) {
         session.send(
-          'Our store carries bikes, parts, accessories, and sport clothing articles'
+          'I am your personal shopping assistant'
         );
         session.userData = Object.assign({}, session.userData, {
           lastVisit: new Date()
