@@ -36,7 +36,6 @@ module.exports = {
       recognized.intent = 'Greeting';
       recognized.score = 1;
     }
-
     callback.call(null, null, recognized);
   }
 };

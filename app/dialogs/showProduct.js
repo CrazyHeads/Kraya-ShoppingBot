@@ -7,13 +7,13 @@ const showProduct = function(session, product) {
   const tile = new builder.HeroCard(session)
     .title(product.name)
     .subtitle(`$${product.price}`)
-    .text(product.description)
+    .text(product.description).slice(0,500)
     .buttons(
       (product.colors.length <= 1)
         ? [
             builder.CardAction.postBack(
               session,
-              `@add:${product.id}`,
+              `@add:${product.product_id}`,
               'Add To Cart'
             )
           ]
@@ -50,7 +50,7 @@ module.exports = function(bot) {
       const product = args.response;
 
       Promise.all([
-        // search.findProductById(product),
+        search.findProductById(product),
         search.findProductsByTitle(product)
       ])
         .then(([product, products]) => {

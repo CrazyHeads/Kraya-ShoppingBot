@@ -60,20 +60,30 @@ const listProducts = (session, products, start = 0) => {
   }
 
   const cards = slice.map(p =>
-    new builder.ThumbnailCard(session)
+    new builder.HeroCard(session)
       .title(p.name)
-      .subtitle(`$${p.price}`)
-      .text(p.description)
+      .subtitle(`Rs.${p.price}`)
+      .text(p.description.slice(0,100))
       .buttons([
-        builder.CardAction.postBack(session, `@show:${p.id}`, 'Show me')
+        builder.CardAction.imBack(session, `@show:${p.product_id}`, 'Add to Cart')
       ])
       .images([
-        builder.CardImage.create(session, p.image).tap(
-          builder.CardAction.postBack(session, `@show:${p.id}`)
+        builder.CardImage.create(session, p.images[0]).tap(
+        builder.CardAction.imBack(session, `@show:${p.product_id}`)
         )
       ])
   );
 
+  cards.push(new builder.HeroCard(session)
+  .images([
+    builder.CardImage.create(session,'https://png.icons8.com/ios/1600/add.png').tap(
+    builder.CardAction.imBack(session, `more`)
+    )
+  ])
+  .buttons([
+    builder.CardAction.imBack(session, `more`, 'Show More')
+  ]));
+ 
   if (start === 0) {
     session.send(
       `I found ${
@@ -86,7 +96,8 @@ const listProducts = (session, products, start = 0) => {
   session.endDialog(
     new builder.Message(session)
       .attachments(cards)
-      .attachmentLayout(builder.AttachmentLayout.list)
+      .attachmentLayout(builder.AttachmentLayout.carousel)
+  
   );
 };
 

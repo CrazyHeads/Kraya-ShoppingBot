@@ -3,12 +3,6 @@ const _ = require('lodash');
 
 // const apiKey = process.env.SEARCH_API_KEY;
 
-const indexes = {
-  categories: `http://webhose.io/productFilter?token=c08e9b5b-cec4-4f6f-bf38-378a5f1702bd&format=json`,
-  products: `http://webhose.io/productFilter?token=c08e9b5b-cec4-4f6f-bf38-378a5f1702bd&format=json`,
-  variants: `http://webhose.io/productFilter?token=c08e9b5b-cec4-4f6f-bf38-378a5f1702bd&format=json`
-};
-
 const search = (index, query) => {
   return request({
     url: `http://webhose.io/productFilter?token=c08e9b5b-cec4-4f6f-bf38-378a5f1702bd&format=json${query}`
@@ -18,7 +12,7 @@ const search = (index, query) => {
       console.log(
         `Searched ${index} for [${query}] and found ${obj && obj.products && obj.products.length} results`
       );
-      return obj.products;
+      return obj.products.slice(1,10);
     })
     .catch(error => {
       console.error(error);
@@ -29,37 +23,38 @@ const search = (index, query) => {
 const searchCategories = query => search('categories', query);
 const searchProducts = query => search('products', query);
 const searchVariants = query => search('variants', query);
+var values = ['Mobiles', 'Laptops']
 
 module.exports = {
-  // listTopLevelCategories: () => searchCategories('$filter=parent eq null'),
+  // listTopLevelCategories: () => values, //searchCategories('$filter=parent eq null'),
 
-  findCategoryByTitle: title => searchCategories(`&q=category:${title}`),
+  findCategoryByTitle: title => searchCategories(`&q=country%3AIN%20category%3A${title}`),
 
   findSubcategoriesByParentId: id =>
-    searchCategories(`$filter=parent eq '${id}'`),
+    searchCategories(`&q=country%3AIN%20category%3A${id}`),
 
-  // findSubcategoriesByParentTitle: function(title) {
-  //   // ToDo: would be easier if categories had their parent titles indexed
-  //   return this.findCategoryByTitle(title).then(value => {
-  //     // ToDo: do we care about the test score on the result?
-  //     return value.slice(0, 1).reduce((chain, v) => {
-  //       return chain.then(() => {
-  //         return this.findSubcategoriesByParentId(v.id);
-  //       });
-  //     }, Promise.resolve({ value: [] }));
-  //   });
-  // },
+  findSubcategoriesByParentTitle: function(title) {
+    // ToDo: would be easier if categories had their parent titles indexed
+    return this.findCategoryByTitle(title).then(value => {
+      // ToDo: do we care about the test score on the result?
+      return value.slice(0, 1).reduce((chain, v) => {
+        return chain.then(() => {
+          return this.findSubcategoriesByParentId(v.id);
+        });
+      }, Promise.resolve({ value: [] }));
+    });
+  },
 
   findProductById: function(product) {
-    return searchProducts(`$filter=id eq '${product}'`);
+    return searchProducts(`&q=country%3AIN%20product_id%3A'${product}'`);
   },
 
   findProductsByTitle: function(product) {
-    return searchProducts(`&q=country%3AIN%20name%3A${product}`);
+    return searchProducts(`&q=country%3AIN%20category%3A${product}`);
   },
 
   findProductsBySubcategoryTitle: function(title) {
-    return searchProducts(`&q=category:'${title}'`);
+    return searchProducts(`&q=country%3AIN%20category%3A${product}`);
   },
 
   findProducts: function(query) {
@@ -111,7 +106,7 @@ module.exports = {
 
     return Promise.all([
       this.findSubcategoriesByParentTitle(query),
-      this.findProducts(`&q=${query}`)
+      this.findProducts(`&q=country%3AIN%20category%3A${query}`)
     ]).then(([subcategories, products]) => ({ subcategories, products }));
   }
 };

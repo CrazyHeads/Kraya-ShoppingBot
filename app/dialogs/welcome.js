@@ -18,12 +18,9 @@ module.exports = function(bot) {
     function(session, args, next) {
       const lastVisit = session.userData.lastVisit;
 
-      session.send(greetings);
+      // session.send(greetings);
 
       if (!lastVisit) {
-        session.send(
-          'I am your personal shopping assistant'
-        );
         session.userData = Object.assign({}, session.userData, {
           lastVisit: new Date()
         });

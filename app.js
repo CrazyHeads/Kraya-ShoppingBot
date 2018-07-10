@@ -24,12 +24,12 @@ const bot = new builder.UniversalBot(connector, {
   persistConversationData: true
 });
 
-var model = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/2cbc3ade-21f3-4b54-8379-10b32c39475c?subscription-key=a824d32eec8e4f5fad56b89574deb811'
+var model = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/3449f364-876f-4683-b4b5-99d5aa41f8c4?subscription-key=4862bf8ef9ce4c3588682fcaeff3d92a'
 var intents = new builder.IntentDialog({
   recognizers: [
     commands,
     greeting,
-    new builder.LuisRecognizer(process.env.LUIS_ENDPOINT)
+    new builder.LuisRecognizer(model)
   ],
   intentThreshold: 0.2,
   recognizeOrder: builder.RecognizeOrder.series
@@ -37,15 +37,31 @@ var intents = new builder.IntentDialog({
 
 intents.matches('Greeting', '/welcome');
 intents.matches('ShowTopCategories', '/categories');
-intents.matches('Search', '/explore');
+intents.matches('Explore', '/explore');
 intents.matches('Next', '/next');
-intents.matches('ExploreProduct', '/showProduct');
+intents.matches('Search', '/showProduct');
 intents.matches('AddToCart', '/addToCart');
 intents.matches('ShowCart', '/showCart');
 intents.matches('Checkout', '/checkout');
 intents.matches('Reset', '/reset');
 intents.matches('Smile', '/smileBack');
 intents.onDefault('/confused');
+
+bot.on('conversationUpdate', function (message) {
+  if (message.membersAdded) {
+      message.membersAdded.forEach(function (identity) {
+          if (identity.id == message.address.bot.id) {
+              // Bot is joining conversation
+              // - For WebChat channel you'll get this on page load.
+              var reply = new builder.Message()
+                      .address(message.address)
+                      .text("Hello! I'm Kraya. \n Your personal shopping assistant.\n");
+              bot.send(reply);
+          } 
+      });
+  }
+  
+});
 
 bot.dialog('/', intents);
 dialog.welcome(bot);
