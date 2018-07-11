@@ -65,7 +65,7 @@ const listProducts = (session, products, start = 0) => {
       .subtitle(`Rs.${p.price}`)
       .text(p.description.slice(0,100))
       .buttons([
-        builder.CardAction.imBack(session, `@show:${p.product_id}`, 'Add to Cart')
+        builder.CardAction.imBack(session, '/showCart', 'Add to Cart')
       ])
       .images([
         builder.CardImage.create(session, p.images[0]).tap(
@@ -120,7 +120,36 @@ module.exports = function(bot) {
       session.sendTyping();
 
       const query = args.response;
-
+      if (query == "yes" || query == "Yes"){
+        var msg = new builder.Message(session);
+        msg.attachmentLayout(builder.AttachmentLayout.carousel)
+        msg.attachments([
+        new builder.HeroCard(session)
+          .title("")
+          .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\gaming.png')])
+          .buttons([
+              builder.CardAction.imBack(session, "Gaming", "Gaming")
+          ]),
+        new builder.HeroCard(session)
+          .title("")
+          .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\youtube.jpeg')])
+          .buttons([
+              builder.CardAction.imBack(session, "youtube", "youtube")
+          ]),
+          new builder.HeroCard(session)
+          .title("")
+          .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\photography.jpeg')])
+          .buttons([
+              builder.CardAction.imBack(session, "photography", "photography")
+          ])
+      ]);
+      session.send(msg).endDialog();
+      } else if (query == "no") {
+        session.endDialog("okay! What can i do for you?");
+      } else if (query == "Gaming" || query == "youtube" || query == "photography") {
+        session.endDialog("Nice Hobby!");
+      }
+    else {
       // ToDo: also need to search for products in the category
       search.find(query).then(({ subcategories, products }) => {
         if (subcategories.length) {
@@ -157,13 +186,15 @@ module.exports = function(bot) {
           session.save();
 
           listProducts(session, products);
-        } else {
+        } 
+        else {
           session.endDialog(
             `I tried looking for ${query} but I couldn't find anything, sorry!`
           );
         }
       });
     }
+  }
   ]);
 
   bot.dialog('/next', [

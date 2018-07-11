@@ -18,18 +18,46 @@ module.exports = function(bot) {
     function(session, args, next) {
       const lastVisit = session.userData.lastVisit;
 
-      // session.send(greetings);
-
+     // session.send(greetings);
       if (!lastVisit) {
+        session.send('Can i ask you a question?');
         session.userData = Object.assign({}, session.userData, {
-          lastVisit: new Date()
-        });
-        session.save();
-      } else {
-        session.send("Glad you're back!");
+           lastVisit: new Date()
+         });
+         session.save();
+         session.endDialog();
       }
-
-      session.endDialog('How can I help you?');
+         //session.sendTyping();
+        // session.endDialog();
+      //   if (session.message.text.trim().equals("yes")) {
+      //     var msg = new builder.Message(session);
+    	//     msg.attachmentLayout(builder.AttachmentLayout.carousel)
+    	//     msg.attachments([
+      //     new builder.HeroCard(session)
+      //       .title("")
+      //       .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\gaming.png')])
+      //       .buttons([
+      //           builder.CardAction.imBack(session, "Gaming", "Gaming")
+      //       ]),
+      //     new builder.HeroCard(session)
+      //       .title("")
+      //       .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\youtube.jpeg')])
+      //       .buttons([
+      //           builder.CardAction.imBack(session, "youtube", "youtube")
+      //       ]),
+      //       new builder.HeroCard(session)
+      //       .title("")
+      //       .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\photography.jpeg')])
+      //       .buttons([
+      //           builder.CardAction.imBack(session, "photography", "photography")
+      //       ])
+      //   ]);
+      //   session.send(msg).endDialog();
+      //  }
+      else {
+        session.endDialog("glad youre back!")
+      }
+      //session.endDialog('How can I help you?');
     }
   ]);
 };

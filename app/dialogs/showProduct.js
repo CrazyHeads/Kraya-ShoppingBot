@@ -14,7 +14,7 @@ const showProduct = function(session, product) {
             builder.CardAction.postBack(
               session,
               `@add:${product.product_id}`,
-              'Add To Cart'
+              'Show more'
             )
           ]
         : []

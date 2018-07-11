@@ -55,7 +55,7 @@ bot.on('conversationUpdate', function (message) {
               // - For WebChat channel you'll get this on page load.
               var reply = new builder.Message()
                       .address(message.address)
-                      .text("Hello! I'm Kraya. \n Your personal shopping assistant.\n");
+                      .text("Hello! I'm Kraya. \n Your personal shopping assistant.");
               bot.send(reply);
           } 
       });
@@ -76,7 +76,36 @@ dialog.showCart(bot);
 bot.dialog('/confused', [
   function(session, args, next) {
     // ToDo: need to offer an option to say "help"
-    if (session.message.text.trim()) {
+    var reply = session.message.trim();
+    if (reply == "yes") {
+          var msg = new builder.Message(session);
+    	    msg.attachmentLayout(builder.AttachmentLayout.carousel)
+    	    msg.attachments([
+          new builder.HeroCard(session)
+            .title("")
+            .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\gaming.png')])
+            .buttons([
+                builder.CardAction.imBack(session, "Gaming", "Gaming")
+            ]),
+          new builder.HeroCard(session)
+            .title("")
+            .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\youtube.jpeg')])
+            .buttons([
+                builder.CardAction.imBack(session, "youtube", "youtube")
+            ]),
+            new builder.HeroCard(session)
+            .title("")
+            .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\photography.jpeg')])
+            .buttons([
+                builder.CardAction.imBack(session, "photography", "photography")
+            ])
+        ]);
+        session.send(msg).endDialog();
+    }
+    else if (session.message.text.trim() == "Gaming") {
+      session.endDialog("Nice Hobby");
+    }
+    else if (session.message.text.trim()) {
       session.endDialog(
         "Sorry, I didn't understand you or maybe just lost track of our conversation"
       );
@@ -119,81 +148,3 @@ app.listen(process.env.PORT || process.env.port || 3978, () => {
 });
 
 
-// // Setup Restify Server
-// var server = restify.createServer();
-// server.listen(process.env.port || process.env.PORT || 3978, function () {
-//    console.log('%s listening to %s', server.name, server.url); 
-// });
-
-// // Create chat connector for communicating with the Bot Framework Service
-// var connector = new builder.ChatConnector({
-//     appId: process.env.MicrosoftAppId,
-//     appPassword: process.env.MicrosoftAppPassword
-// });
-
-// // Listen for messages from users 
-// server.post('/api/messages', connector.listen());
-// var model = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/2cbc3ade-21f3-4b54-8379-10b32c39475c?subscription-key=0ea014db136845feb12005633d5c405a&spellCheck=true&bing-spell-check-subscription-key={b74fea214c3b419485447ea3ad6a5d0a}&verbose=true&timezoneOffset=0&q=';
-// var bot = new builder.UniversalBot(connector, function (session) {
-//     session.send("Hi! I'm Kraya and I'm an Shpooing Assistant. ");
-//     initializeConversationData(session);
-
-//     session.beginDialog("OptionPrompt");
-
-// });
-
-// var recognizer = new builder.LuisRecognizer(model)
-// var dialog = new builder.IntentDialog({ recognizers: [recognizer] })
-// const greetings = [
-//   "Hi I'm Kraya",
-//   'hi there,this is Kraya',
-//   'heyyy! This is Kraya',
-//   "hey there! I'm Krayaa",
-//   "hello beautiful face!I'm Kraya",
-//   'hello hello, Kraya here',
-//   "hello there, I'm Kraya",
-//   'hey! Im Kraya!,what up',
-//   "hey!I'm Kraya..what's up",
-//   'Hey! whatup',
-//   'Salute',
-//   'Hi! how are you',
-// ];
-// bot.dialog('/', dialog)
-
-// console.log(dialog)
-// dialog.matches('Greetings', function (session, results) {
-//     const pickRandom = require('pick-random');
-//     session.send("%s",pickRandom(greetings));
-//     //session.send('Hello I am Kraya! What can I do for you today?');
-// })
-
-// dialog.matches('Search', function (session, args,next) {
-//     var intent  = args.intent;
-// //    session.send("%s",intent);
-//     var item = builder.EntityRecognizer.findEntity(args.intent.entities, 'Item')
-//      if (!item) {
-//             builder.Prompts.text(session, "Sure! Take a look at these");
-//      } else{
-//             next({ response: item.entity });
-//      }
-// })
-
-// bot.dialog('/confused', [
-//     function(session, args, next) {
-//       // ToDo: need to offer an option to say "help"
-//       if (session.message.text.trim()) {
-//         session.endDialog(
-//           "Sorry, I didn't understand you or maybe just lost track of our conversation"
-//         );
-//       } else {
-//         session.endDialog();
-//       }
-//     }
-//   ]);
-  
-
-// dialog.matches('Traits', function (session, args, results) {
-//     session.send('I feel the same');
-// })
-
-// dialog.onDefault(builder.DialogAction.send("I'm sorry I didn't understand."));
