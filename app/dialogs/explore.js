@@ -120,36 +120,32 @@ module.exports = function(bot) {
       session.sendTyping();
 
       const query = args.response;
-      if (query == "yes" || query == "Yes"){
-        var msg = new builder.Message(session);
-        msg.attachmentLayout(builder.AttachmentLayout.carousel)
-        msg.attachments([
-        new builder.HeroCard(session)
-          .title("")
-          .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\gaming.png')])
-          .buttons([
-              builder.CardAction.imBack(session, "Gaming", "Gaming")
-          ]),
-        new builder.HeroCard(session)
-          .title("")
-          .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\youtube.jpeg')])
-          .buttons([
-              builder.CardAction.imBack(session, "youtube", "youtube")
-          ]),
-          new builder.HeroCard(session)
-          .title("")
-          .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\photography.jpeg')])
-          .buttons([
-              builder.CardAction.imBack(session, "photography", "photography")
-          ])
-      ]);
-      session.send(msg).endDialog();
-      } else if (query == "no") {
-        session.endDialog("okay! What can i do for you?");
-      } else if (query == "Gaming" || query == "youtube" || query == "photography") {
-        session.endDialog("Nice Hobby!");
-      }
-    else {
+      // if (query == "yes" || query == "Yes"){
+      //   var msg = new builder.Message(session);
+      //   msg.attachmentLayout(builder.AttachmentLayout.carousel)
+      //   msg.attachments([
+      //     new builder.HeroCard(session)
+      //     .title("")
+      //     .images([builder.CardImage
+      //       .create(session, 'https://www.billboard.com/files/styles/900_wide/public/media/Gaming-2017-billboard-1548.jpg')
+      //       .tap(builder.CardAction.imBack(session, "Gaming", "Gaming"))]),
+      //   new builder.HeroCard(session)
+      //     .title("")
+      //     .images([builder.CardImage
+      //       .create(session, 'http://www.cthulhuart.com/wp-content/uploads/2018/06/movie.jpg')
+      //       .tap(builder.CardAction.imBack(session, "Youtube", "Youtube"))]),
+      //   new builder.HeroCard(session)
+      //     .title("")
+      //     .images([builder.CardImage
+      //       .create(session, 'https://petapixel.com/assets/uploads/2014/03/photog1.jpg')])
+      //       .tap(builder.CardAction.imBack(session, "Photography", "Photography"))]
+      // );
+      // session.send(msg).endDialog();
+      // } else if (query == "no") {
+      //   session.endDialog("okay! What can i do for you?");
+      // } else if (query == "Gaming" || query == "youtube" || query == "photography") {
+      //   session.endDialog("Nice Hobby!");
+      // }
       // ToDo: also need to search for products in the category
       search.find(query).then(({ subcategories, products }) => {
         if (subcategories.length) {
@@ -194,7 +190,7 @@ module.exports = function(bot) {
         }
       });
     }
-  }
+  
   ]);
 
   bot.dialog('/next', [
