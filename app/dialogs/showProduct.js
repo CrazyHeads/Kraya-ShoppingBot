@@ -5,19 +5,18 @@ const showProduct = function(session, product) {
   session.sendTyping();
 
   const tile = new builder.HeroCard(session)
-    .title(product.name)
-    .subtitle(`$${product.price}`)
-    .text(product.description).slice(0,500)
+    .title(product_title)
+    .subtitle(`Rs.${product_lowest_price}`)
+    .text(product_link)
     .buttons(
-      (product.colors.length <= 1)
-        ? [
+      //  (product.colors.length <= 1)
+      //  ? [
             builder.CardAction.postBack(
               session,
-              `@add:${product.name}`,
-              'Show more'
-            )
-          ]
-        : []
+              `@add:${product_title}`,
+              'Show more')
+    //        ]
+    //     : []
     )
     .images([builder.CardImage.create(session, product.images[0])]);
 
@@ -50,12 +49,14 @@ module.exports = function(bot) {
       const product = args.response;
 
       Promise.all([
+        search.fetchDetails(product),
         search.findProductById(product),
         search.findProductsByTitle(product)
       ])
         .then(([product, products]) => {
           console.log(product)
           const item = product.concat(products)[0];
+          //const item = product;
           if (!item) {
             session.endDialog(
               "Sorry, I couldn't find the product you asked about"
@@ -80,7 +81,7 @@ module.exports = function(bot) {
           } else {
             builder.Prompts.confirm(
               session,
-              `This product comes in differnet ` +
+              `This product comes in different ` +
                 item.modifiers.map(mod => `${mod}s`).join(' and ') +
                 '. Would you like to choose one that fits you?',
               { listStyle: builder.ListStyle.button }

@@ -1,18 +1,29 @@
 const request = require('request-promise-native');
 const _ = require('lodash');
 
-// const apiKey = process.env.SEARCH_API_KEY;
+const searchApp = process.env.SEARCH_APP_NAME;
+const apiKey = `M9COE0ZSdJMpWHtKWsej1Ct7PJ423K7y350`;
+
+const indexes = {
+  categories: `https://price-api.datayuge.com/api/v1/compare/list/categories?api_key=${apiKey}`,
+  products: `https://price-api.datayuge.com/api/v1/compare/search?api_key=${apiKey}`,
+  variants: `https://prisce-api.datayuge.com/api/v1/compare/list/filters?api_key=${apiKey}`,
+  productDetail: `https://price-api.datayuge.com/api/v1/compare/detail?api_key=${apiKey}`//&id=ZToxMjIyNA`
+};
 
 const search = (index, query) => {
+  console.log(`${indexes[index]}&${query}`)
   return request({
-    url: `http://webhose.io/productFilter?token=c08e9b5b-cec4-4f6f-bf38-378a5f1702bd&format=json${query}`
+    url: `${indexes[index]}&${query}`,
   })
     .then(result => {
       const obj = JSON.parse(result);
       console.log(
-        `Searched ${index} for [${query}] and found ${obj && obj.products && obj.products.length} results`
+        `Searched ${index} for [${query}] and found ${obj &&
+          obj.data &&
+          obj.data.length} results`
       );
-      return obj.products.slice(1,10);
+      return obj.data;
     })
     .catch(error => {
       console.error(error);
@@ -23,15 +34,13 @@ const search = (index, query) => {
 const searchCategories = query => search('categories', query);
 const searchProducts = query => search('products', query);
 const searchVariants = query => search('variants', query);
-var values = ['Mobiles', 'Laptops']
+const searchDetails = query => search('productDetail',query);
 
 module.exports = {
-  // listTopLevelCategories: () => values, //searchCategories('$filter=parent eq null'),
+  listTopLevelCategories: () => searchCategories('page=1'),
 
-  findCategoryByTitle: title => searchCategories(`&q=country%3AIN%20category%3A${title}`),
-
-  findSubcategoriesByParentId: id =>
-    searchCategories(`&q=country%3AIN%20category%3A${id}`),
+  findCategoryByTitle: title => searchCategories(`product="${title}"`),
+  findSubcategoriesByParentId: id => searchCategories(`product_id='${id}'`),
 
   findSubcategoriesByParentTitle: function(title) {
     // ToDo: would be easier if categories had their parent titles indexed
@@ -39,38 +48,42 @@ module.exports = {
       // ToDo: do we care about the test score on the result?
       return value.slice(0, 1).reduce((chain, v) => {
         return chain.then(() => {
-          return this.findSubcategoriesByParentId(v.id);
+          return this.findSubcategoriesByParentId(v.product_title);
         });
       }, Promise.resolve({ value: [] }));
     });
   },
 
+  fetchDetails: function(product) {
+    return searchDetails(`id=${product}`);
+  },
   findProductById: function(product) {
-    return searchProducts(`&q=country%3AIN%20product_id%3A'${product}'`);
+    return searchProducts(`product=${product}`);
   },
 
   findProductsByTitle: function(product) {
-    return searchProducts(`&q=country%3AIN%20category%3A${product}`);
+    return searchProducts(`product=${product}`);
   },
 
   findProductsBySubcategoryTitle: function(title) {
-    return searchProducts(`&q=country%3AIN%20category%3A${product}`);
+    return searchProducts(`subcategory=${title}`);
   },
 
   findProducts: function(query) {
-    return searchProducts(query);
+    console.log("In find Products")
+    return searchProducts(`product=${query}`);
   },
 
   findVariantById: function(id) {
-    return searchVariants(`&q=id:'${id}'`);
+    return searchVariants(`$filter=id eq${id}`);
   },
 
   findVariantBySku: function(sku) {
-    return searchVariants(`$filter=sku eq '${sku}'`);
+    return searchVariants(`$filter=sku eq ${sku}`);
   },
 
   findVariantForProduct: function(productId, color, size) {
-    return searchVariants(`$filter=productId eq '${productId}'`).then(
+    return searchVariants(`product_id=${productId}`).then(
       variants => {
         if (variants.length === 1) {
           console.log(`Returning the only variant for ${productId}`);
@@ -106,7 +119,7 @@ module.exports = {
 
     return Promise.all([
       this.findSubcategoriesByParentTitle(query),
-      this.findProducts(`&q=country%3AIN%20category%3A${query}`)
+      this.findProducts(`${query}`)
     ]).then(([subcategories, products]) => ({ subcategories, products }));
   }
 };

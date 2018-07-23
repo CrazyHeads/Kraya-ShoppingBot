@@ -29,7 +29,7 @@ const listCategories = (session, subcategories, start = 0) => {
   }
 
   // ToDo: I have two displays. Cards and words. probably need a method to present it
-  const message = slice.map(c => c.title).join(', ');
+  const message = slice.map(c => c.product_title).join(', ');
   const more = start + slice.length < subcategories.length;
 
   if (!more) {
@@ -60,30 +60,19 @@ const listProducts = (session, products, start = 0) => {
   }
 
   const cards = slice.map(p =>
-    new builder.HeroCard(session)
-      .title(p.name)
-      .subtitle(`Rs.${p.price}`)
-      .text(p.description.slice(0,100))
-      .buttons([
-        builder.CardAction.imBack(session, '/showCart', 'Add to Cart')
-      ])
-      .images([
-        builder.CardImage.create(session, p.images[0]).tap(
-        builder.CardAction.imBack(session, `@show:${p.product_id}`)
-        )
-      ])
-  );
-
-  cards.push(new builder.HeroCard(session)
-  .images([
-    builder.CardImage.create(session,'https://png.icons8.com/ios/1600/add.png').tap(
-    builder.CardAction.imBack(session, `more`)
-    )
-  ])
-  .buttons([
-    builder.CardAction.imBack(session, `more`, 'Show More')
-  ]));
- 
+    new builder.ThumbnailCard(session)
+    .title(p.product_title)
+    .subtitle(`Rs.${p.product_lowest_price}`)
+    .text(p.product_brand)
+    .buttons([
+      builder.CardAction.imBack(session, `@show:${p.product_id}`, 'Show me')
+    ])
+    .images([
+      builder.CardImage.create(session, p.product_image).tap(
+        builder.CardAction.imBack(session, `${p.product_id}`)
+      )
+    ])
+);
   if (start === 0) {
     session.send(
       `I found ${
@@ -97,7 +86,6 @@ const listProducts = (session, products, start = 0) => {
     new builder.Message(session)
       .attachments(cards)
       .attachmentLayout(builder.AttachmentLayout.carousel)
-  
   );
 };
 
@@ -120,41 +108,16 @@ module.exports = function(bot) {
       session.sendTyping();
 
       const query = args.response;
-      // if (query == "yes" || query == "Yes"){
-      //   var msg = new builder.Message(session);
-      //   msg.attachmentLayout(builder.AttachmentLayout.carousel)
-      //   msg.attachments([
-      //     new builder.HeroCard(session)
-      //     .title("")
-      //     .images([builder.CardImage
-      //       .create(session, 'https://www.billboard.com/files/styles/900_wide/public/media/Gaming-2017-billboard-1548.jpg')
-      //       .tap(builder.CardAction.imBack(session, "Gaming", "Gaming"))]),
-      //   new builder.HeroCard(session)
-      //     .title("")
-      //     .images([builder.CardImage
-      //       .create(session, 'http://www.cthulhuart.com/wp-content/uploads/2018/06/movie.jpg')
-      //       .tap(builder.CardAction.imBack(session, "Youtube", "Youtube"))]),
-      //   new builder.HeroCard(session)
-      //     .title("")
-      //     .images([builder.CardImage
-      //       .create(session, 'https://petapixel.com/assets/uploads/2014/03/photog1.jpg')])
-      //       .tap(builder.CardAction.imBack(session, "Photography", "Photography"))]
-      // );
-      // session.send(msg).endDialog();
-      // } else if (query == "no") {
-      //   session.endDialog("okay! What can i do for you?");
-      // } else if (query == "Gaming" || query == "youtube" || query == "photography") {
-      //   session.endDialog("Nice Hobby!");
-      // }
+
       // ToDo: also need to search for products in the category
       search.find(query).then(({ subcategories, products }) => {
-        if (subcategories.length) {
+        //if (subcategories.length) {
           session.privateConversationData = Object.assign(
             {},
             session.privateConversationData,
             {
               list: {
-                type: 'category',
+                type: 'categories',
                 data: subcategories
               },
               pagination: {
@@ -165,7 +128,8 @@ module.exports = function(bot) {
           session.save();
 
           listCategories(session, subcategories);
-        } else if (products.length) {
+       // } 
+        if (products.length) {
           session.privateConversationData = Object.assign(
             {},
             session.privateConversationData,
@@ -182,15 +146,13 @@ module.exports = function(bot) {
           session.save();
 
           listProducts(session, products);
-        } 
-        else {
+        } else {
           session.endDialog(
             `I tried looking for ${query} but I couldn't find anything, sorry!`
           );
         }
       });
     }
-  
   ]);
 
   bot.dialog('/next', [

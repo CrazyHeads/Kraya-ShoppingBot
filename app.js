@@ -42,6 +42,7 @@ intents.matches('ShowTopCategories', '/categories');
 intents.matches('Explore', '/explore');
 intents.matches('Next', '/next');
 intents.matches('Search', '/showProduct');
+intents.matches('ShowProduct', '/showProduct');
 intents.matches('AddToCart', '/addToCart');
 intents.matches('ShowCart', '/showCart');
 intents.matches('Checkout', '/checkout');
@@ -78,36 +79,37 @@ dialog.showCart(bot);
 bot.dialog('/confused', [
   function(session, args, next) {
     // ToDo: need to offer an option to say "help"
-    var reply = session.message.trim();
-    if (reply == "yes") {
-          var msg = new builder.Message(session);
-    	    msg.attachmentLayout(builder.AttachmentLayout.carousel)
-    	    msg.attachments([
-          new builder.HeroCard(session)
-            .title("")
-            .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\gaming.png')])
-            .buttons([
-                builder.CardAction.imBack(session, "Gaming", "Gaming")
-            ]),
-          new builder.HeroCard(session)
-            .title("")
-            .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\youtube.jpeg')])
-            .buttons([
-                builder.CardAction.imBack(session, "youtube", "youtube")
-            ]),
-            new builder.HeroCard(session)
-            .title("")
-            .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\photography.jpeg')])
-            .buttons([
-                builder.CardAction.imBack(session, "photography", "photography")
-            ])
-        ]);
-        session.send(msg).endDialog();
-    }
-    else if (session.message.text.trim() == "Gaming") {
-      session.endDialog("Nice Hobby");
-    }
-    else if (session.message.text.trim()) {
+   // var reply = session.message.trim();
+  //  if (reply == "yes") {
+  //         var msg = new builder.Message(session);
+  //   	    msg.attachmentLayout(builder.AttachmentLayout.carousel)
+  //   	    msg.attachments([
+  //         new builder.HeroCard(session)
+  //           .title("")
+  //           .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\gaming.png')])
+  //           .buttons([
+  //               builder.CardAction.imBack(session, "Gaming", "Gaming")
+  //           ]),
+  //         new builder.HeroCard(session)
+  //           .title("")
+  //           .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\youtube.jpeg')])
+  //           .buttons([
+  //               builder.CardAction.imBack(session, "youtube", "youtube")
+  //           ]),
+  //           new builder.HeroCard(session)
+  //           .title("")
+  //           .images([builder.CardImage.create(session, 'C:\Users\mypc\Kraya-ShoppingBot\pictures\photography.jpeg')])
+  //           .buttons([
+  //               builder.CardAction.imBack(session, "photography", "photography")
+  //           ])
+  //       ]);
+  //       session.send(msg).endDialog();
+  //   }
+  //   else if (session.message.text.trim() == "Gaming") {
+  //     session.endDialog("Nice Hobby");
+  //   }
+
+    if (session.message.text.trim()) {
       session.endDialog(
         "Sorry, I didn't understand you or maybe just lost track of our conversation"
       );
