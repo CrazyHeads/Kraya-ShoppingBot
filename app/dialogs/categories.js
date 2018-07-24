@@ -7,13 +7,13 @@ module.exports = function(bot) {
 
       // search.listTopLevelCategories().then(value => next(value));
     },
-    function(session, args, next) {
+     function(session, args, next) {
       const message = (args || [])
-        .map(v => v)
+        .map(v => v.category_name)
         .filter(t => t !== 'Uncategorized')
-        .join(', ');
+        .join('^ ');
 
-      session.endDialog('We have ' + message);
+      session.endDialog('We have ' + message.split('^')[0]);
     }
   ]);
 };
