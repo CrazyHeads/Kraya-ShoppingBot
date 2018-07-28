@@ -5,20 +5,23 @@ const showProduct = function(session, product) {
   session.sendTyping();
 
   const tile = new builder.HeroCard(session)
-    .title(product_title)
-    .subtitle(`Rs.${product_lowest_price}`)
-    .text(product_link)
+    .title(product.product_name)
+    .subtitle(`Rs.${product.product_lowest_price}`)
+    .text(product.product_link)
     .buttons(
       //  (product.colors.length <= 1)
-      //  ? [
+      //  ? 
+      [
             builder.CardAction.postBack(
               session,
-              `@add:${product_title}`,
+              `@add:${product.product_id}`,
               'Show more')
     //        ]
-    //     : []
+    //     : [
+      
+    ]
     )
-    .images([builder.CardImage.create(session, product.images[0])]);
+    .images([builder.CardImage.create(session, product.product_images[0])]);
 
   session.send(new builder.Message(session).attachments([tile]));
 };
@@ -55,8 +58,8 @@ module.exports = function(bot) {
       ])
         .then(([product, products]) => {
           console.log(product)
-          const item = product.concat(products)[0];
-          //const item = product;
+          //const item = product.concat(products)[0];
+          const item = product;
           if (!item) {
             session.endDialog(
               "Sorry, I couldn't find the product you asked about"

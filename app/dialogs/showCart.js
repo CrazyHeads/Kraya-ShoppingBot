@@ -3,22 +3,18 @@ const sentiment = require('../sentiment');
 
 const displayCart = function(session, cart) {
   const cards = cart.map(item =>
-    new builder.ThumbnailCard(session)
-      .title(item.product.title)
-      .subtitle(`$${item.variant.price}`)
-      .text(
-        `${item.variant.color ? 'Color -' + item.variant.color + '\n' : ''}` +
-          `${item.variant.size ? 'Size -' + item.variant.size : ''}` ||
-          item.product.description
-      )
+    new builder.HeroCard(session)
+    .title(item.product_name)
+    .subtitle(`Rs.${item.product_lowest_price}`)
+    .text(item.product_link)
       .buttons([
         builder.CardAction.imBack(
           session,
-          `@remove:${item.variant.id}`,
+          `@remove:${item.product_id}`,
           'Remove'
         )
       ])
-      .images([builder.CardImage.create(session, item.variant.image)])
+      .images([builder.CardImage.create(session, item.product_images)])
   );
 
   session.sendTyping();
@@ -36,7 +32,7 @@ module.exports = function(bot) {
   bot.dialog('/showCart', [
     function(session, args, next) {
       const cart = session.privateConversationData.cart;
-
+      console.log("CARTTTT", cart)
       if (!cart || !cart.length) {
         session.send(
           'Your shopping cart appears to be empty. Can I help you find anything?'

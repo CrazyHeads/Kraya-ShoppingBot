@@ -5,7 +5,7 @@ module.exports = function(bot) {
     function(session, args, next) {
       session.sendTyping();
 
-      // search.listTopLevelCategories().then(value => next(value));
+      search.listTopLevelCategories().then(value => next(value));
     },
      function(session, args, next) {
       const message = (args || [])

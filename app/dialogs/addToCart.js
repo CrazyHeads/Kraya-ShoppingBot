@@ -5,48 +5,19 @@ const sentiment = require('../sentiment');
 
 const lookupProductOrVariant = function(session, id, next) {
   session.sendTyping();
-
   return Promise.all([
-    search.findProductById(id),
-    search.findVariantById(id)
+    search.fetchDetails(id),
+    // search.findVariantById(id)
   ]).then(([products, variants]) => {
-    if (products.length) {
-      product = products[0];
-      if (
-        product.modifiers.length === 0 ||
-        (product.size.length <= 1 && product.color.length <= 1)
-      ) {
+    if (products) {
+      product = products;
+      if (true) {
         session.sendTyping();
 
         return search
-          .findVariantForProduct(product.id)
-          .then(variant => ({ product, variant }));
-      } else {
-        // This would only happen if someone clicked Add To Cart on a multi-variant product
-        // And I don't think we give the user that option
-        session.reset('/showProduct', {
-          entities: [
-            {
-              entity: id,
-              score: 1,
-              type: 'Product'
-            }
-          ]
-        });
-        return Promise.reject();
+          .fetchDetails(product.product_id)
+          .then(product)
       }
-    } else if (variants.length) {
-      const variant = variants[0];
-
-      return search
-        .findProductById(variant.productId)
-        .then(products => ({
-          product: products[0],
-          variant
-        }))
-        .catch(error => {
-          console.error(error);
-        });
     } else {
       session.endDialog(`I cannot find ${id} in my product catalog, sorry!`);
       return Promise.reject();
@@ -54,13 +25,12 @@ const lookupProductOrVariant = function(session, id, next) {
   });
 };
 
-const describe = function(product, variant) {
-  return (
-    `${product.title} (${variant.sku})` +
-    (!!variant.color ? `, Color - ${variant.color}` : '') +
-    (!!variant.size ? `, Size - ${variant.size}` : '')
-  );
-};
+// const describe = function(product, variant) {
+//   console.log(product)
+//   return (
+//     `${product.product_name} ` 
+//   );
+// };
 
 /*
   Not used at the moment. 
@@ -120,35 +90,52 @@ const showRecommendations = function(session) {
 */
 
 module.exports = function(bot) {
+  var id = ''
   bot.dialog('/addToCart', [
     function(session, args, next) {
       if (!args) {
         return session.reset('/confused');
       }
 
-      const id = builder.EntityRecognizer.findEntity(args.entities, 'Id');
+      id = builder.EntityRecognizer.findEntity(args.entities, 'Id');
       if (!id || !id.entity) {
         return session.reset('/confused');
       }
-
+      
       lookupProductOrVariant(session, id.entity, next)
         .then(({ product, variant }) => next({ product, variant }))
         .catch(error => console.error(error));
     },
     function(session, args, next) {
-      const product = args.product;
-      const variant = args.variant;
 
-      session.privateConversationData.cart = (
-        session.privateConversationData.cart || []
-      ).concat({
-        product,
-        variant
-      });
+      Promise.all([
+        search.fetchDetails(id.entity),
+      ])
+        .then(([product, products]) => {
+          console.log(product)
+          //const item = product.concat(products)[0];
+          const item = product;
+          if (!item) {
+            session.endDialog(
+              "Sorry, I couldn't find the product you asked about"
+            );
+            return Promise.reject();
+          } else {
+            return item;
+          }
+        })
+        .then(item => {
+          if (session.privateConversationData.cart){
+            session.privateConversationData.cart =  
+            console.log(session.privateConversationData.concat(item))
+          }else{
+            session.privateConversationData.cart = []
+            session.privateConversationData.cart =  session.privateConversationData.cart.console(item)
+          }
+        })
 
-      session.send(`I have added ${describe(product, variant)} to your cart`);
+      session.send(`I have added ${product.product_name} to your cart`);
 
-      next({ variant });
     },
     function(session, args, next) {
       // not doing recommendations at the moment
