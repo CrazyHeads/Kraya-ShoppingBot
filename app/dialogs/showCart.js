@@ -3,7 +3,7 @@ const sentiment = require('../sentiment');
 
 const displayCart = function(session, cart) {
   const cards = cart.map(item =>
-    new builder.HeroCard(session)
+    new builder.ThumbnailCard(session)
     .title(item.product_name)
     .subtitle(`Rs.${item.product_lowest_price}`)
     .text(item.product_link)
