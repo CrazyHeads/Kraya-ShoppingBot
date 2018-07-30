@@ -1,6 +1,5 @@
 var builder = require('botbuilder');
 const express = require('express');
-var restify = require('restify');
 
 const greeting = require('./app/recognizer/greeting');
 const commands = require('./app/recognizer/commands');
@@ -18,8 +17,9 @@ const dialog = {
 };
 
 const connector = new builder.ChatConnector({
-  appId: process.env.MICROSOFT_APP_ID,
-  appPassword: process.env.MICROSFT_APP_PASSWORD
+    appId: process.env.MicrosoftAppId,
+    appPassword: process.env.MicrosoftAppPassword,
+    openIdMetadata: process.env.BotOpenIdMetadata
 });
 
 const bot = new builder.UniversalBot(connector, {
@@ -143,18 +143,22 @@ bot.dialog('/checkout', [
 ]);
 
 
-var server = restify.createServer();
-server.post('/api/messages', connector.listen());
-server.listen(process.env.port || process.env.PORT || 3978, function () {
-  console.log('%s listening to %s', server.name, server.url); 
-});
-// const app = express(); 
-
-// app.get(`/`, (_, res) => res.sendFile(path.join(__dirname + '/index.html')));
-// app.post('/api/messages', connector.listen());
-
-// app.listen(process.env.PORT || process.env.port || 3978, () => {
-//   console.log('Express HTTP is ready and is accepting connections');
+// var server = restify.createServer();
+// server.post('/api/messages', connector.listen());
+// server.listen(process.env.port || process.env.PORT || 3978, function () {
+//   console.log('%s listening to %s', server.name, server.url); 
 // });
+  
+const app = express(); 
+
+app.use(express.static(__dirname + '/public', {
+  extensions: ['html']
+}));
+
+app.post('/api/messages', connector.listen());
+
+app.listen(process.env.PORT || process.env.port || 3978, () => {
+  console.log('Express HTTP is ready and is accepting connections');
+});
 
 

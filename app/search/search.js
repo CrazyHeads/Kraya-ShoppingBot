@@ -2,7 +2,7 @@ const request = require('request-promise-native');
 const _ = require('lodash');
 
 const searchApp = process.env.SEARCH_APP_NAME;
-const apiKey = `M9COE0ZSdJMpWHtKWsej1Ct7PJ423K7y350`;
+const apiKey = `QXJGMD3zKIEG2e0oPLPlz7MRdZvMuvjSKrd`;
 
 const indexes = {
   categories: `https://price-api.datayuge.com/api/v1/compare/list/categories?api_key=${apiKey}`,

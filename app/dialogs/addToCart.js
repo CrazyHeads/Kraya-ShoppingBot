@@ -124,15 +124,10 @@ module.exports = function(bot) {
             return item;
           }
         })
-        .then(item => {
-          if (session.privateConversationData.cart){
-            session.privateConversationData.cart =  
-            console.log(session.privateConversationData.concat(item))
-          }else{
-            session.privateConversationData.cart = []
-            session.privateConversationData.cart =  session.privateConversationData.cart.console(item)
-          }
-        })
+          session.privateConversationData.cart = (
+            session.privateConversationData.cart || []
+          ).concat(product);
+      
 
       session.send(`I have added ${product.product_name} to your cart`);
 
