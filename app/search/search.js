@@ -8,9 +8,28 @@ const indexes = {
   categories: `https://price-api.datayuge.com/api/v1/compare/list/categories?api_key=${apiKey}`,
   products: `https://price-api.datayuge.com/api/v1/compare/search?api_key=${apiKey}`,
   variants: `https://prisce-api.datayuge.com/api/v1/compare/list/filters?api_key=${apiKey}`,
-  productDetail: `https://price-api.datayuge.com/api/v1/compare/detail?api_key=${apiKey}`//&id=ZToxMjIyNA`
+  productDetail: `https://price-api.datayuge.com/api/v1/compare/detail?api_key=${apiKey}`,//&id=ZToxMjIyNA`
+  productSpecs: `https://price-api.datayuge.com/api/v1/compare/specs?api_key=${apiKey}`,
+  prices: `https://price-api.datayuge.com/api/v1/compare/price?api_key=${apiKey}`
 };
-
+const searchPrices = (index, query) => {
+  console.log(`${indexes[index]}&${query}`)
+  return request({
+    url: `${indexes[index]}&${query}`,
+  })
+    .then(result => {
+      const obj = JSON.parse(result);
+      console.log(
+        `Searched ${index} for [${query}] and found ${obj &&
+          obj.length} results`
+      );
+      return obj;
+    })
+    .catch(error => {
+      console.error(error);
+      return [];
+    });
+};
 const search = (index, query) => {
   console.log(`${indexes[index]}&${query}`)
   return request({
@@ -35,6 +54,9 @@ const searchCategories = query => search('categories', query);
 const searchProducts = query => search('products', query);
 const searchVariants = query => search('variants', query);
 const searchDetails = query => search('productDetail',query);
+const specs = query => search('productSpecs',query);
+const prices = query => searchPrices('prices',query);
+//const prices = query => search('prices',query);
 
 module.exports = {
   listTopLevelCategories: () => searchCategories('page=1'),
@@ -57,6 +79,12 @@ module.exports = {
   fetchDetails: function(product) {
     return searchDetails(`id=${product}`);
   },
+  fetchSpecs: function(product) {
+    return specs(`id=${product}`);
+  },
+  fetchPrices: function(product) {
+    return prices(`id=${product}`);
+  },
   findProductById: function(product) {
     return searchProducts(`product=${product}`);
   },
@@ -70,7 +98,7 @@ module.exports = {
   },
 
   findProducts: function(query) {
-    console.log("In find Products")
+    //console.log("In find Products")
     return searchProducts(`product=${query}`);
   },
 

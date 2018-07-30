@@ -5,8 +5,8 @@ const displayCart = function(session, cart) {
   const cards = cart.map(item =>
     new builder.HeroCard(session)
     .title(item.product_name)
-    .subtitle(`Rs.${item.product_lowest_price}`)
-    .text(item.product_link)
+    .subtitle(`${item.product_model}`)
+    .text(`${item.product_ratings}`)
       .buttons([
         builder.CardAction.imBack(
           session,
@@ -14,7 +14,7 @@ const displayCart = function(session, cart) {
           'Remove'
         )
       ])
-      .images([builder.CardImage.create(session, item.product_images)])
+      .images([builder.CardImage.create(session, item.product_images[0])])
   );
 
   session.sendTyping();
@@ -43,12 +43,12 @@ module.exports = function(bot) {
         next();
       }
     },
-    ...sentiment.confirm('Ready to checkout?'),
+    //...sentiment.confirm('Ready to checkout?'),
     function(session, args, next) {
       if (args.response) {
         session.reset('/checkout');
       } else {
-        session.endDialog('Sure, take your time. Just tell me when');
+        //session.endDialog('Sure, take your time. Just tell me when');
       }
     }
   ]);
