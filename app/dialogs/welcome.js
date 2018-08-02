@@ -40,20 +40,20 @@ module.exports = function(bot) {
             new builder.HeroCard(session)
             .title("")
             .images([builder.CardImage
-              .create(session, 'https://www.billboard.com/files/styles/900_wide/public/media/Gaming-2017-billboard-1548.jpg')
-              .tap(builder.CardAction.imBack(session, "Gaming", "Gaming"))]),
+              .create(session, 'http://www.color-hex.com/palettes/1866.png')
+              .tap(builder.CardAction.imBack(session, "White", "White"))]),
           new builder.HeroCard(session)
             .title("")
             .images([builder.CardImage
-              .create(session, 'http://www.cthulhuart.com/wp-content/uploads/2018/06/movie.jpg')
-              .tap(builder.CardAction.imBack(session, "Youtube", "Youtube"))]),
+              .create(session, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuk4V3qIvwq8NH_wu2UPcW4dSmWYYM4VeugRRCaTEkdqbdjrcY1w')
+              .tap(builder.CardAction.imBack(session, "Black", "Black"))]),
           new builder.HeroCard(session)
             .title("")
             .images([builder.CardImage
-              .create(session, 'https://petapixel.com/assets/uploads/2014/03/photog1.jpg')])
-              .tap(builder.CardAction.imBack(session, "Photography", "Photography"))]
+              .create(session, 'https://media.istockphoto.com/photos/metal-texture-red-background-picture-id453232543?k=6&m=453232543&s=612x612&w=0&h=pq2bIg-WUXgZWMdt8sOwXahL-NZNShX4q780jAlbAM4=')])
+              .tap(builder.CardAction.imBack(session, "Red", "Red"))]
         );
-        session.send(msg)//.endDialog();
+        session.endDialog(msg)//.endDialog();
        // session.endDialog("Nice Hobby!");
         //session.endDialog();
       }

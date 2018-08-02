@@ -75,10 +75,17 @@ const parse = {
     intent: 'AddToCart',
     score: 1
   }),
-  remove: (context, what) => {
-    console.log('Remove from cart is not supported');
-    return unrecognized;
-  },
+  remove: (context, what) => ({
+    entities: [
+      {
+        entity: what,
+        score: 1,
+        type: 'Id'
+      }
+    ],
+    intent: 'Removefromcart',
+    score: 1
+  }),
   checkout: () => ({
     intent: 'Checkout',
     score: 1

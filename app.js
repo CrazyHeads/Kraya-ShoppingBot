@@ -13,7 +13,8 @@ const dialog = {
   choseVariant: require('./app/dialogs/choseVariant'),
   showVariant: require('./app/dialogs/showVariant'),
   addToCart: require('./app/dialogs/addToCart'),
-  showCart: require('./app/dialogs/showCart')
+  showCart: require('./app/dialogs/showCart'),
+  removeFromcart : require('./app/dialogs/removeFromcart')
 };
 
 const connector = new builder.ChatConnector({
@@ -40,6 +41,7 @@ var intents = new builder.IntentDialog({
 intents.matches('Greeting', '/welcome');
 intents.matches('ShowTopCategories', '/categories');
 intents.matches('Explore', '/explore');
+intents.matches('Removefromcart','/removeFromcart');
 intents.matches('Next', '/next');
 intents.matches('Search', '/showProduct');
 intents.matches('ShowProduct', '/showProduct');
@@ -49,6 +51,7 @@ intents.matches('Checkout', '/checkout');
 intents.matches('Reset', '/reset');
 intents.matches('Smile', '/smileBack');
 intents.onDefault('/confused');
+
 
 bot.on('conversationUpdate', function (message) {
   if (message.membersAdded) {
@@ -75,6 +78,7 @@ dialog.choseVariant(bot);
 dialog.showVariant(bot);
 dialog.addToCart(bot);
 dialog.showCart(bot);
+dialog.removeFromcart(bot);
 
 bot.dialog('/confused', [
   function(session, args, next) {

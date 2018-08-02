@@ -1,6 +1,18 @@
 const builder = require('botbuilder');
 const search = require('../search/search');
-
+const pickRandom = require('pick-random');
+const jokes = [ "I am on a seafood diet. I see food, and I eat it.",
+"Alcohol! Because no great story started with someone eating a salad",
+"Don't worry if plan A fails, there are 25 more letters in the alphabet.",
+"Don’t drink while driving – you might spill the beer.",
+"Doesn’t expecting the unexpected make the unexpected expected?",
+"I'm not clumsy, The floor just hates me, the table and chairs are bullies and the walls get in my way.",
+"Life is short, smile while you still have teeth.",
+"The only reason I'm fat is because a tiny body couldn't store all this personality.",
+"I'm not lazy, I'm just very relaxed.",
+"You're born free, then you're taxed to death.",
+"A cookie a day keeps the sadness away. An entire jar of cookies a day brings it back."
+];
 const extractQuery = (session, args) => {
   if (args && args.entities && args.entities.length) {
     // builder.EntityRecognizer.findEntity(args.entities, 'CompanyName');
@@ -39,14 +51,14 @@ const listCategories = (session, subcategories, start = 0) => {
       }have ${message}. See anything you like? Just ask for it.`
     );
   } else {
-    session.endDialog(
-      `We ${start > 0 ? 'also ' : ''}have ${message} and ${
-        start > 0 ? 'even ' : ''
-      }more.` +
-        (start > 0
-          ? " Keep scrolling if you don't see what you like."
-          : ' You can scroll through the list with "next" or "more"')
-    );
+    // session.endDialog(
+    //   `We ${start > 0 ? 'also ' : ''}have ${message} and ${
+    //     start > 0 ? 'even ' : ''
+    //   }more.` +
+    //     (start > 0
+    //       ? " Keep scrolling if you don't see what you like."
+    //       : ' You can scroll through the list with "next" or "more"')
+    // );
   }
 };
 
@@ -98,7 +110,7 @@ module.exports = function(bot) {
         // ToDo: randomize across a few different sentences
         builder.Prompts.text(
           session,
-          'I am sorry, what would you like me to look up for you?'
+          'Which brand would you like me to look up for you?'
         );
       } else {
         next({ response: query });
@@ -108,10 +120,36 @@ module.exports = function(bot) {
       session.sendTyping();
 
       const query = args.response;
+      if (query == "skip") {
+        session.endDialog("That's okay. I won't feel bad");
+      }
+      else if (query == 'Black') {
+       // session.send("You chose black");
+       //const favColor = 'black';
+       session.endDialog("%s",pickRandom(jokes));
+     //  session.endDialog("I am not lazy, I am on energy saving mode");
+
+       session.privateConversationData.favColor = 'Black';
+
+      } else if (query == 'White') {
+       // const favColor = 'white';
+        session.privateConversationData.favColor = 'White';
+        session.endDialog("%s",pickRandom(jokes));
+
+        //session.endDialog("Life is a shipwreck but we must not forget to sing in the lifeboats.");
+
+      } else if (query == 'Red') {
+       // const favColor = 'red';
+        session.privateConversationData.favColor = 'Red';
+        session.endDialog("%s",pickRandom(jokes));
+
+        //session.send("Put on your red shoes, and dance the blues.");
+      }
+      else {
 
       // ToDo: also need to search for products in the category
       search.find(query).then(({ subcategories, products }) => {
-        //if (subcategories.length) {
+       // if (subcategories.length) {
           session.privateConversationData = Object.assign(
             {},
             session.privateConversationData,
@@ -128,7 +166,7 @@ module.exports = function(bot) {
           session.save();
 
           listCategories(session, subcategories);
-       // } 
+       //} 
         if (products.length) {
           session.privateConversationData = Object.assign(
             {},
@@ -153,6 +191,7 @@ module.exports = function(bot) {
         }
       });
     }
+  }
   ]);
 
   bot.dialog('/next', [

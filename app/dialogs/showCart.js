@@ -18,7 +18,7 @@ const displayCart = function(session, cart) {
   );
 
   session.sendTyping();
-  session.send(
+  session.endDialog(
     new builder.Message(
       session,
       `You have ${cart.length} products in your cart`
@@ -34,7 +34,7 @@ module.exports = function(bot) {
       const cart = session.privateConversationData.cart;
       console.log("CARTTTT", cart)
       if (!cart || !cart.length) {
-        session.send(
+        session.endDialog(
           'Your shopping cart appears to be empty. Can I help you find anything?'
         );
         session.reset('/categories');

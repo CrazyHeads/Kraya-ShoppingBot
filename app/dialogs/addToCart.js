@@ -129,7 +129,7 @@ module.exports = function(bot) {
           ).concat(product);
       
 
-      session.send(`I have added ${product.product_name} to your cart`);
+      session.endDialog(`I have added ${product.product_name} to your compare list`);
 
     },
     function(session, args, next) {
